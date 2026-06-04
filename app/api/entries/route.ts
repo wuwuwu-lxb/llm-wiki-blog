@@ -1,16 +1,25 @@
 import { NextResponse } from "next/server";
+import { requireApiUser } from "@/lib/auth";
 import { createContent, listContents, type ContentType, type Visibility } from "@/lib/db";
 
 const contentTypes = new Set<ContentType>(["entry", "note", "post", "memory"]);
 const visibilities = new Set<Visibility>(["private", "draft", "public"]);
 
 export async function GET() {
+  if (!(await requireApiUser())) {
+    return NextResponse.json({ error: "未登录。" }, { status: 401 });
+  }
+
   return NextResponse.json({
     contents: listContents(),
   });
 }
 
 export async function POST(request: Request) {
+  if (!(await requireApiUser())) {
+    return NextResponse.json({ error: "未登录。" }, { status: 401 });
+  }
+
   const payload = (await request.json()) as {
     type?: ContentType;
     title?: string;

@@ -1,10 +1,13 @@
 import { Database, FileText, ImagePlus } from "lucide-react";
+import { requireUser } from "@/lib/auth";
 import { listAssets, listCategories, listContents, listTags } from "@/lib/db";
 import { DashboardComposer } from "./DashboardComposer";
 
 export const dynamic = "force-dynamic";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  await requireUser();
+
   const contents = listContents();
   const assets = listAssets();
   const categories = listCategories();

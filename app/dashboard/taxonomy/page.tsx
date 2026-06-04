@@ -1,9 +1,12 @@
+import { requireUser } from "@/lib/auth";
 import { listCategories, listTags } from "@/lib/db";
 import { TaxonomyManager } from "./TaxonomyManager";
 
 export const dynamic = "force-dynamic";
 
-export default function TaxonomyPage() {
+export default async function TaxonomyPage() {
+  await requireUser();
+
   return (
     <div className="page">
       <p className="eyebrow">分类和标签管理</p>
@@ -16,4 +19,3 @@ export default function TaxonomyPage() {
     </div>
   );
 }
-

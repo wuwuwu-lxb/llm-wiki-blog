@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
+import { requireApiUser } from "@/lib/auth";
 import { createAsset } from "@/lib/db";
 
 const uploadDir = path.join(process.cwd(), "storage", "uploads");
@@ -8,6 +9,10 @@ const allowedMimePrefixes = ["image/"];
 const maxFileSize = 8 * 1024 * 1024;
 
 export async function POST(request: Request) {
+  if (!(await requireApiUser())) {
+    return NextResponse.json({ error: "未登录。" }, { status: 401 });
+  }
+
   const form = await request.formData();
   const file = form.get("file");
 
@@ -59,4 +64,3 @@ function mimeToExtension(mimeType: string) {
       return "";
   }
 }
-

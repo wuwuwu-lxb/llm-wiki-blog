@@ -44,6 +44,9 @@ npm run dev
 - 公开博客支持分类页和标签页
 - 工作台可以保存内容并上传图片
 - 分类/标签管理页：`/dashboard/taxonomy`
+- GitHub OAuth 登录
+- 私有页面和写入 API 鉴权保护
+- giscus 评论组件占位
 
 ## 设计调研
 
@@ -51,6 +54,50 @@ npm run dev
 - 前端和博客案例调研：[docs/frontend-research.md](docs/frontend-research.md)
 
 本地数据库和上传文件默认不会进入 git。
+
+## 鉴权配置
+
+复制环境变量示例：
+
+```bash
+cp .env.example .env.local
+```
+
+创建 GitHub OAuth App：
+
+- Homepage URL：`http://localhost:3000`
+- Authorization callback URL：`http://localhost:3000/api/auth/github/callback`
+
+生产环境部署时，把上面的域名换成真实域名。
+
+需要配置：
+
+```env
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+GITHUB_ALLOWED_LOGIN=wuwuwu-lxb
+AUTH_SECRET=
+```
+
+`AUTH_SECRET` 应该使用随机长字符串。
+
+## 评论配置
+
+评论使用 giscus，需要：
+
+1. GitHub 仓库开启 Discussions。
+2. 安装 giscus GitHub App。
+3. 在 giscus 配置页面拿到 repo id、category 和 category id。
+
+然后配置：
+
+```env
+NEXT_PUBLIC_GISCUS_REPO=wuwuwu-lxb/llm-wiki-blog
+NEXT_PUBLIC_GISCUS_REPO_ID=
+NEXT_PUBLIC_GISCUS_CATEGORY=
+NEXT_PUBLIC_GISCUS_CATEGORY_ID=
+```
 
 ## 推荐的第一版方向
 

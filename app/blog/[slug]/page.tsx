@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getContentBySlug, listContents } from "@/lib/db";
+import { GiscusComments } from "../GiscusComments";
 
 export const dynamic = "force-dynamic";
 
@@ -55,6 +56,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <section className="section panel">
         <p>{post.body}</p>
       </section>
+
+      <GiscusComments term={post.slug} />
     </article>
   );
 }
