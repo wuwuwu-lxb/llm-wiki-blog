@@ -7,6 +7,9 @@
 来源仓库：
 
 - `https://github.com/addyosmani/agent-skills`
+- `https://github.com/shadcn-ui/ui`
+- `https://github.com/mattbx/shadcn-skills`
+- `https://github.com/mxyhi/ok-skills`
 
 已复制到：
 
@@ -16,8 +19,27 @@
 - `docs/skill/vendor/agent-skills/security-and-hardening`
 - `docs/skill/vendor/agent-skills/api-and-interface-design`
 - `docs/skill/vendor/agent-skills/code-review-and-quality`
+- `docs/skill/vendor/shadcn-ui/shadcn`
+- `docs/skill/vendor/shadcn-skills/skills/shadcn-component-discovery`
+- `docs/skill/vendor/shadcn-skills/skills/shadcn-component-review`
+- `docs/skill/vendor/ok-skills/frontend-skill`
 
-这些 skill 不是本项目最终设计规范，只是参考材料。后续做前端改版时，可以从中吸收工程方法、测试方式和质量标准。
+这些 skill 不是本项目最终设计规范，只是参考材料。后续做前端改版时，可以从中吸收工程方法、测试方式、质量标准、shadcn 组件发现流程和更现代的视觉构图方式。
+
+## React 组件库参考
+
+来源仓库：
+
+- `https://github.com/brillout/awesome-react-components`
+- `https://github.com/jbranchaud/awesome-react-design-systems`
+
+已复制到：
+
+- `docs/skill/vendor/react-component-libraries/awesome-react-components.md`
+- `docs/skill/vendor/react-component-libraries/awesome-react-design-systems.md`
+- `docs/skill/vendor/react-component-libraries/README.md`
+
+这些不是 agent skill，而是前端组件库和设计系统索引。后续做文章编辑器、图片管理、知识库图谱、评论、dashboard、self-LLM 对话界面时，可以先从这里筛选成熟组件。
 
 ## 本项目自定义 skill
 
@@ -30,4 +52,3 @@
 - `docs/skill/oauth-giscus-setup.md`
 
 记录 GitHub OAuth 登录和 giscus 评论系统的配置方式。
-
