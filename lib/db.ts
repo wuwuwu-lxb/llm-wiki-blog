@@ -642,9 +642,28 @@ export function deleteTags(ids: string[]) {
     return 0;
   }
 
+  const rows = database
+    .prepare(
+      `
+      SELECT id, name, slug, description, created_at AS createdAt
+      FROM tags
+      WHERE id IN (${uniqueIds.map(() => "?").join(",")})
+    `,
+    )
+    .all(...uniqueIds) as TaxonomyRow[];
+  const deletedNames = new Set(rows.map((row) => row.name));
+  const contentRows = database
+    .prepare("SELECT id, tags_json AS tagsJson FROM contents")
+    .all() as { id: string; tagsJson: string }[];
+  const updateContentTags = database.prepare("UPDATE contents SET tags_json = ?, updated_at = ? WHERE id = ?");
   const deleteLinks = database.prepare("DELETE FROM content_tags WHERE tag_id = ?");
   const deleteTag = database.prepare("DELETE FROM tags WHERE id = ?");
   let deleted = 0;
+
+  for (const row of contentRows) {
+    const nextTags = safeParseTags(row.tagsJson).filter((name) => !deletedNames.has(name));
+    updateContentTags.run(JSON.stringify(nextTags), new Date().toISOString(), row.id);
+  }
 
   for (const id of uniqueIds) {
     deleteLinks.run(id);
