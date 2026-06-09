@@ -2,6 +2,7 @@ import Link from "next/link";
 import { BookOpenText, MapPinned, Radio } from "lucide-react";
 import { BilibiliBrandIcon, GitHubBrandIcon } from "./BrandIcons";
 import { HomeRealtime } from "./HomeRealtime";
+import { TransitionLink } from "./TransitionLink";
 import { VisitorMap } from "./VisitorMap";
 import { getOnlineStatus, getSiteStats, listContentSummaries, listVisitorLocations } from "@/lib/db";
 
@@ -106,15 +107,16 @@ export default function HomePage() {
         <p className="muted">共有 {stats.totalPublicContent} 篇公开内容，再接再厉。</p>
         <div className="home-timeline-list">
           {timeline.map((item) => (
-            <Link
+            <TransitionLink
               className="home-timeline-item"
               href={item.type === "post" ? `/blog/${item.slug}` : `/diary?date=${item.publishedAt.slice(0, 10)}`}
+              sharedScope={item.type === "post" ? "article" : undefined}
               key={item.id}
             >
               <span>{item.publishedAt.slice(5, 10)}</span>
-              <strong>{item.title}</strong>
+              <strong data-shared-key={item.type === "post" ? "article-title" : undefined}>{item.title}</strong>
               <em>{item.type === "post" ? "Posts" : "Notes"}</em>
-            </Link>
+            </TransitionLink>
           ))}
           {timeline.length === 0 ? (
             <div className="home-timeline-empty">

@@ -8,7 +8,7 @@ export default function BlogPage() {
 
   return (
     <BlogIndex
-      title="公开来源库"
+      title=""
       description=""
       posts={posts}
       categories={listPublicCategories()}

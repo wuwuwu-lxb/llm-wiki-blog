@@ -6,7 +6,9 @@ import { Moon, Sun } from "lucide-react";
 
 type ColorMode = "light" | "dark";
 type ViewTransitionDocument = Document & {
-  startViewTransition?: (callback: () => void) => void;
+  startViewTransition?: (callback: () => void) => {
+    finished: Promise<void>;
+  };
 };
 
 export function ThemeControls() {
@@ -61,10 +63,15 @@ export function ThemeControls() {
       return;
     }
 
-    startViewTransition.call(document, () => {
+    root.classList.add("theme-view-transition");
+    const transition = startViewTransition.call(document, () => {
       flushSync(() => {
         setMode(nextMode);
       });
+    });
+
+    transition?.finished?.finally(() => {
+      root.classList.remove("theme-view-transition");
     });
   }
 

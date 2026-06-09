@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TransitionLink } from "@/app/TransitionLink";
 import type { ContentItem } from "@/lib/db";
 
 type CountItem = {
@@ -17,9 +18,13 @@ type BlogIndexProps = {
 export function BlogIndex({ title, description, posts, categories, tags }: BlogIndexProps) {
   return (
     <div className="page">
-      <p className="eyebrow">公开内容</p>
-      <h1>{title}</h1>
-      <p className="lead">{description}</p>
+      {title ? (
+        <>
+          <p className="eyebrow">公开内容</p>
+          <h1>{title}</h1>
+        </>
+      ) : null}
+      {description ? <p className="lead">{description}</p> : null}
 
       <section className="section blog-layout">
         <aside className="blog-sidebar">
@@ -50,10 +55,11 @@ export function BlogIndex({ title, description, posts, categories, tags }: BlogI
 
         <div className="article-list">
           {posts.map((post) => (
-            <Link
+            <TransitionLink
               className={`article-card ${post.coverAsset ? "with-cover" : ""}`}
               href={`/blog/${post.slug}`}
               prefetch={false}
+              sharedScope="article"
               key={post.id}
             >
               <span className="article-card-main">
@@ -63,8 +69,12 @@ export function BlogIndex({ title, description, posts, categories, tags }: BlogI
                   <span>浏览 {post.viewCount}</span>
                   <span>{post.category}</span>
                 </div>
-                <h2>{post.title}</h2>
-                <p>{post.summary}</p>
+                <h2 className="shared-article-title" data-shared-key="article-title">
+                  {post.title}
+                </h2>
+                <p className="shared-article-summary" data-shared-key="article-summary">
+                  {post.summary}
+                </p>
                 <span className="tag-row">
                   {post.tags.map((tag) => (
                     <span className="tag" key={tag}>
@@ -75,10 +85,17 @@ export function BlogIndex({ title, description, posts, categories, tags }: BlogI
               </span>
               {post.coverAsset ? (
                 <span className="article-card-cover">
-                  <img src={`/assets/${post.coverAsset.id}`} alt={post.coverAsset.alt || post.title} />
+                  <img
+                    className="shared-article-cover"
+                    data-shared-key="article-cover"
+                    decoding="async"
+                    loading="lazy"
+                    src={`/assets/${post.coverAsset.id}`}
+                    alt={post.coverAsset.alt || post.title}
+                  />
                 </span>
               ) : null}
-            </Link>
+            </TransitionLink>
           ))}
           {posts.length === 0 ? <p className="muted">这个视图下还没有公开文章。</p> : null}
         </div>

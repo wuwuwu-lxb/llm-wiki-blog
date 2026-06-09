@@ -32,8 +32,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   return (
     <article className="page">
       <p className="eyebrow">公开文章</p>
-      <h1>{post.title}</h1>
-      <p className="lead">{post.summary}</p>
+      <h1 className="shared-article-title-detail" data-shared-key="article-title" data-shared-scope="article">
+        {post.title}
+      </h1>
+      <p className="lead shared-article-summary-detail" data-shared-key="article-summary" data-shared-scope="article">
+        {post.summary}
+      </p>
 
       <div className="module-meta article-stats">
         <span>发布 {post.publishedAt.slice(0, 10)}</span>
@@ -52,7 +56,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
       {post.coverAsset ? (
         <section className="section article-cover">
-          <img src={`/assets/${post.coverAsset.id}`} alt={post.coverAsset.alt || post.title} />
+          <img
+            className="shared-article-cover-detail"
+            data-shared-key="article-cover"
+            data-shared-scope="article"
+            decoding="async"
+            fetchPriority="high"
+            src={`/assets/${post.coverAsset.id}`}
+            alt={post.coverAsset.alt || post.title}
+          />
         </section>
       ) : null}
 
