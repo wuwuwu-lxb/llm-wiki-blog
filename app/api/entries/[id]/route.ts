@@ -32,6 +32,7 @@ export async function PATCH(request: Request, { params }: EntryRouteProps) {
     tagIds?: string[];
     visibility?: Visibility;
     assetIds?: string[];
+    coverAssetId?: string;
   };
 
   if (payload.visibility && Object.keys(payload).length === 1) {
@@ -76,6 +77,7 @@ export async function PATCH(request: Request, { params }: EntryRouteProps) {
     tagIds: payload.tagIds ?? [],
     visibility,
     assetIds: payload.assetIds ?? [],
+    coverAssetId: payload.coverAssetId,
   });
 
   return content

@@ -42,6 +42,8 @@ export type ContentItem = {
   visibility: Visibility;
   createdAt: string;
   updatedAt: string;
+  coverAssetId: string;
+  coverAsset: MediaAsset | null;
   assets: MediaAsset[];
 };
 
@@ -58,6 +60,7 @@ type ContentRow = {
   visibility: Visibility;
   createdAt: string;
   updatedAt: string;
+  coverAssetId: string | null;
 };
 
 type AssetRow = Omit<MediaAsset, "sizeBytes"> & {
@@ -264,6 +267,8 @@ function mapContentRow(row: ContentRow): ContentItem {
     visibility: row.visibility,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
+    coverAssetId: row.coverAssetId ?? "",
+    coverAsset: row.coverAssetId ? getAsset(row.coverAssetId) : null,
     tags: tags.map((tag) => tag.name),
     tagIds: tags.map((tag) => tag.id),
     assets: getAssetsForContent(row.id),
@@ -335,7 +340,8 @@ export function listContents(
         c.tags_json AS tagsJson,
         c.visibility,
         c.created_at AS createdAt,
-        c.updated_at AS updatedAt
+        c.updated_at AS updatedAt,
+        c.cover_asset_id AS coverAssetId
       FROM contents c
       LEFT JOIN categories cat ON cat.id = c.category_id
       ${where}
@@ -364,7 +370,8 @@ export function getContentBySlug(slug: string) {
         c.tags_json AS tagsJson,
         c.visibility,
         c.created_at AS createdAt,
-        c.updated_at AS updatedAt
+        c.updated_at AS updatedAt,
+        c.cover_asset_id AS coverAssetId
       FROM contents c
       LEFT JOIN categories cat ON cat.id = c.category_id
       WHERE c.slug = ?
@@ -392,7 +399,8 @@ export function getContentById(id: string) {
         c.tags_json AS tagsJson,
         c.visibility,
         c.created_at AS createdAt,
-        c.updated_at AS updatedAt
+        c.updated_at AS updatedAt,
+        c.cover_asset_id AS coverAssetId
       FROM contents c
       LEFT JOIN categories cat ON cat.id = c.category_id
       WHERE c.id = ?
@@ -412,6 +420,7 @@ export function createContent(input: {
   tagIds: string[];
   visibility: Visibility;
   assetIds?: string[];
+  coverAssetId?: string;
 }) {
   return createContentWithDb(getDb(), {
     ...input,
@@ -434,6 +443,7 @@ export function updateContent(
     tagIds: string[];
     visibility: Visibility;
     assetIds?: string[];
+    coverAssetId?: string;
   },
 ) {
   const database = getDb();
@@ -454,7 +464,7 @@ export function updateContent(
     .prepare(
       `
       UPDATE contents
-      SET type = ?, title = ?, category = ?, category_id = ?, summary = ?, body = ?, tags_json = ?, visibility = ?, updated_at = ?
+      SET type = ?, title = ?, category = ?, category_id = ?, summary = ?, body = ?, tags_json = ?, visibility = ?, cover_asset_id = ?, updated_at = ?
       WHERE id = ?
     `,
     )
@@ -467,6 +477,7 @@ export function updateContent(
       input.body.trim(),
       JSON.stringify(tagItems.map((tag) => tag.name)),
       input.visibility,
+      input.coverAssetId?.trim() || null,
       now,
       id,
     );
@@ -528,6 +539,7 @@ function createContentWithDb(
     tags: string[];
     visibility: Visibility;
     assetIds?: string[];
+    coverAssetId?: string;
   },
 ) {
   const now = new Date().toISOString();
@@ -539,8 +551,8 @@ function createContentWithDb(
     .prepare(
       `
       INSERT INTO contents (
-        id, type, title, slug, category, category_id, summary, body, tags_json, visibility, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        id, type, title, slug, category, category_id, summary, body, tags_json, visibility, cover_asset_id, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     )
     .run(
@@ -554,6 +566,7 @@ function createContentWithDb(
       input.body.trim(),
       JSON.stringify(tagItems.map((tag) => tag.name)),
       input.visibility,
+      input.coverAssetId?.trim() || null,
       now,
       now,
     );

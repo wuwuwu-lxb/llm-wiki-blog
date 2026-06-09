@@ -29,6 +29,7 @@ export async function POST(request: Request) {
     tagIds?: string[];
     visibility?: Visibility;
     assetIds?: string[];
+    coverAssetId?: string;
   };
 
   const title = payload.title?.trim();
@@ -62,6 +63,7 @@ export async function POST(request: Request) {
     tagIds: payload.tagIds ?? [],
     visibility,
     assetIds: payload.assetIds ?? [],
+    coverAssetId: payload.coverAssetId,
   });
 
   return NextResponse.json({ content }, { status: 201 });

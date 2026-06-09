@@ -40,6 +40,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         ))}
       </div>
 
+      {post.coverAsset ? (
+        <section className="section article-cover">
+          <img src={`/assets/${post.coverAsset.id}`} alt={post.coverAsset.alt || post.title} />
+        </section>
+      ) : null}
+
       <section className="section panel article-body">
         <MarkdownPreview content={post.body} />
       </section>

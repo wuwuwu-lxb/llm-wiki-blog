@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ImagePlus, Save, TextCursorInput } from "lucide-react";
+import { ImagePlus, Save, Star, TextCursorInput } from "lucide-react";
 import { MarkdownPreview } from "@/app/MarkdownPreview";
 import type { ContentItem, ContentType, MediaAsset, TaxonomyItem, Visibility } from "@/lib/db";
 
@@ -23,6 +23,7 @@ export function DashboardComposer({ initialContent, initialAssets, categories, t
   const [type, setType] = useState<ContentType>(initialContent?.type ?? "entry");
   const [visibility, setVisibility] = useState<Visibility>(initialContent?.visibility ?? "private");
   const [assetIds, setAssetIds] = useState<string[]>(initialContent?.assets.map((asset) => asset.id) ?? []);
+  const [coverAssetId, setCoverAssetId] = useState(initialContent?.coverAssetId ?? "");
   const [status, setStatus] = useState(initialContent ? `正在编辑：${initialContent.title}` : "准备记录。");
   const [lastSaved, setLastSaved] = useState<ContentItem | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -39,6 +40,11 @@ export function DashboardComposer({ initialContent, initialAssets, categories, t
     setBody((current) => `${current}${imageMarkdown}`);
     setAssetIds((current) => (current.includes(asset.id) ? current : [...current, asset.id]));
     setStatus("图片已插入正文。");
+  }
+
+  function toggleCover(asset: MediaAsset) {
+    setCoverAssetId((current) => (current === asset.id ? "" : asset.id));
+    setAssetIds((current) => (current.includes(asset.id) ? current : [...current, asset.id]));
   }
 
   async function handleUpload(event: React.ChangeEvent<HTMLInputElement>) {
@@ -92,6 +98,7 @@ export function DashboardComposer({ initialContent, initialAssets, categories, t
         tagIds: selectedTagIds,
         visibility,
         assetIds,
+        coverAssetId,
       }),
     });
 
@@ -108,6 +115,7 @@ export function DashboardComposer({ initialContent, initialAssets, categories, t
     setBody("");
     setSelectedTagIds([]);
     setAssetIds([]);
+    setCoverAssetId("");
     setLastSaved(result.content);
     setStatus(initialContent ? "已更新内容。" : "已保存到 SQLite。");
   }
@@ -241,6 +249,14 @@ export function DashboardComposer({ initialContent, initialAssets, categories, t
             <strong>{type}</strong>
           </div>
           <h2>{title || "实时预览"}</h2>
+          {coverAssetId ? (
+            <div className="preview-cover-wrap">
+              <img className="preview-cover" src={`/assets/${coverAssetId}`} alt="文章封面" />
+              <button className="asset-action danger" type="button" onClick={() => setCoverAssetId("")}>
+                移除封面
+              </button>
+            </div>
+          ) : null}
           {summary ? <p className="lead">{summary}</p> : null}
           <MarkdownPreview content={body} />
         </section>
@@ -262,6 +278,15 @@ export function DashboardComposer({ initialContent, initialAssets, categories, t
                     <button className="asset-action" type="button" onClick={() => insertImage(asset)}>
                       <TextCursorInput aria-hidden="true" size={13} />
                       插入
+                    </button>
+                    <button
+                      className="asset-action"
+                      type="button"
+                      aria-pressed={coverAssetId === asset.id}
+                      onClick={() => toggleCover(asset)}
+                    >
+                      <Star aria-hidden="true" size={13} />
+                      {coverAssetId === asset.id ? "取消封面" : "设封面"}
                     </button>
                   </figcaption>
                 </figure>
