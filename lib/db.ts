@@ -169,6 +169,11 @@ function seed(database: DatabaseSync) {
   const count = database.prepare("SELECT COUNT(*) AS count FROM contents").get() as { count: number };
 
   ensureCategory(database, defaultCategoryName);
+
+  if (count.count > 0) {
+    return;
+  }
+
   ensureCategory(database, "观点");
   ensureCategory(database, "技术");
   ensureCategory(database, "日记");
@@ -180,10 +185,6 @@ function seed(database: DatabaseSync) {
   ensureTag(database, "幻觉");
   ensureTag(database, "复盘");
   ensureTag(database, "MVP");
-
-  if (count.count > 0) {
-    return;
-  }
 
   createContentWithDb(database, {
     id: "post-why-self-llm",
