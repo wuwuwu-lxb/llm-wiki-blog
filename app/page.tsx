@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { BookOpenText, MapPinned, Radio } from "lucide-react";
 import { BilibiliBrandIcon, GitHubBrandIcon } from "./BrandIcons";
+import { HomeOnlineStatus } from "./HomeOnlineStatus";
 import { HomeRealtime } from "./HomeRealtime";
 import { TransitionLink } from "./TransitionLink";
 import { VisitorMapClient } from "./VisitorMapClient";
@@ -38,30 +39,7 @@ export default async function HomePage() {
         <article className="panel home-profile-card">
           <div className="home-avatar-wrap">
             <span className="home-avatar" aria-hidden="true" />
-            <span className="home-online-dot" aria-label="在线状态">
-              <span className="home-online-popover">
-                <span className="profile-status-line">
-                  <strong>状态</strong>
-                  <span>{onlineStatus?.message ?? "暂无状态"}</span>
-                </span>
-                <span className="device-status-summary">
-                  <strong>在线 {tailscaleStatus.onlineCount} / {tailscaleStatus.totalCount}</strong>
-                </span>
-                {tailscaleStatus.devices.length > 0 ? (
-                  <span className="device-status-list">
-                    {tailscaleStatus.devices.map((device) => (
-                      <span className="device-status-row" key={device.id}>
-                        <i data-online={device.online} />
-                        <span>{device.name}</span>
-                        <em>{device.os}</em>
-                      </span>
-                    ))}
-                  </span>
-                ) : (
-                  <small>{tailscaleStatus.configured ? "暂时没有可展示设备" : "Tailscale API 未配置"}</small>
-                )}
-              </span>
-            </span>
+            <HomeOnlineStatus onlineStatus={onlineStatus} tailscaleStatus={tailscaleStatus} />
           </div>
           <h1>唔唔唔</h1>
           <p className="home-tagline" style={{ "--typing-steps": Math.max(1, tagline.length) } as CSSProperties}>
